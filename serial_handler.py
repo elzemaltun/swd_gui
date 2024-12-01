@@ -5,17 +5,32 @@ class SerialHandler:
     def __init__(self, port, baudrate, timeout=1):
         self.port = port
         self.baudrate = baudrate
-        self.ser = serial.Serial(port, baudrate, timeout=timeout)
+        self.ser = None
+    
+    def connect(self):
+        try:
+            self.ser = serial.Serial(self.port, self.baudrate, timeout=1)
+            print(f"Connected to {self.port}")
+        except serial.SerialException as e:
+            print(e)
 
     def send_msg(self, command):
-        self.ser.write(command.encode('utf-8'))
+        if self.ser:
+            self.ser.write(command.encode('utf-8'))
+            print(f"Sent: {command}")
+        else:
+            raise OSError("Not connected to Arduino")
     
     def read_update(self):
-        response = self.ser.readline().decode('utf-8').strip()
-        return response
+        if self.ser and self.ser.in_waiting > 0:
+            response = self.ser.readline().decode('utf-8').strip()
+            return response
+        else:
+            return None
     
     def close(self):
-        self.ser.close()
+        if self.ser:
+            self.ser.close()
 
     """
     def find_arduino_port(vid=None, pid=None):
