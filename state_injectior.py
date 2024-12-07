@@ -6,24 +6,14 @@ def main():
     serial_handler = SerialHandler(port, baudrate=9600)
 
     try:
-        serial_handler.connect()
-
         while True:
-    
-            # Send a command to Arduino
-            serial_handler.send_msg("EMPTY")
-
-            time.sleep(0.5)
-
-            # Read messages from Arduino
-            messages = serial_handler.read_update()
-            for message in messages:
-                print(f"Received: {message}")
-            else:
-                print("No message received")
-
-            time.sleep(1.0)
-            
+            if serial_handler.ser.in_waiting > 0:
+                serial_handler.send_msg("this is python")
+                time.sleep(1)
+                serial_handler.read_update()
+                time.sleep(1)
+    except KeyboardInterrupt:
+        print("Exiting...")
     finally:
         serial_handler.close()
 

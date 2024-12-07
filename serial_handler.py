@@ -3,9 +3,8 @@ import serial.tools.list_ports
 
 class SerialHandler:
     def __init__(self, port, baudrate, timeout=1):
-        self.port = port
-        self.baudrate = baudrate
-        self.ser = None
+        self.ser = serial.Serial(port, baudrate, timeout=1)
+        self.buffer = ""  # Used to store incomplete messages
     
     def connect(self):
         try:
@@ -14,19 +13,18 @@ class SerialHandler:
         except serial.SerialException as e:
             print(e)
 
-    def send_msg(self, command):
+    def send_msg(self, msg):
         if self.ser:
-            self.ser.write(command.encode('utf-8'))
-            print(f"Sent: {command}")
+            self.ser.write((msg + "\n").encode('utf-8'))
+            print(f"Sent: {msg}")
         else:
             raise OSError("Not connected to Arduino")
     
     def read_update(self):
-        if self.ser and self.ser.in_waiting > 0:
-            response = self.ser.readline().decode('utf-8').strip()
-            return response
-        else:
-            return None
+        if self.ser.in_waiting > 0:  # Use self.ser.in_waiting to check for available data
+            data = self.ser.readline().decode('utf-8', errors='replace').strip()
+            print(f"Received: {data}")
+        return None  # No complete message yet
     
     def close(self):
         if self.ser:
