@@ -13,7 +13,7 @@ class SerialHandler:
         except serial.SerialException as e:
             print(e)
 
-    def send_msg(self, msg):
+    def send_msg_str(self, msg):
         if self.ser:
             self.ser.write((msg + "\n").encode('utf-8'))
             print(f"Sent: {msg}")

@@ -7,11 +7,13 @@ def main():
 
     try:
         while True:
-            if serial_handler.ser.in_waiting > 0:
-                serial_handler.send_msg("this is python")
-                time.sleep(1)
-                serial_handler.read_update()
-                time.sleep(1)
+            # if serial_handler.ser.in_waiting > 0:
+            serial_handler.send_msg_str("this is python")
+            time.sleep(1)
+            serial_handler.read_update()
+            time.sleep(1)
+            # else:
+            #     raise OSError("Not connected to Arduino")
     except KeyboardInterrupt:
         print("Exiting...")
     finally:

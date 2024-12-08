@@ -2,6 +2,8 @@ import customtkinter
 import tkinter
 import tkinter.messagebox
 from threading import Thread
+from button_handler import MessageHandler
+from serial_handler import SerialHandler
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -10,6 +12,10 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 class Gui(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+
+        # SerialHandler setup
+        self.serial_handler = SerialHandler(port="COM8", baudrate=9600)  
+        self.message_handler = MessageHandler(self.serial_handler)
 
         # configure window
         self.title("Smart Waste Disposal Operational Board")
@@ -53,7 +59,7 @@ class Gui(customtkinter.CTk):
         self.progress_bar.grid(row=1, column=0, padx=20, pady=20, sticky="n")
         self.progress_bar.set(0)  # Initialize to 0%
         
-        self.home_frame_button_1 = customtkinter.CTkButton(self.home_frame, text="EMPTY WASTE", fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
+        self.home_frame_button_1 = customtkinter.CTkButton(self.home_frame, text="EMPTY WASTE", fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.message_handler.empty_waste_button_clicked)
         self.home_frame_button_1.grid(row=2, column=0, padx=20, pady=20, sticky="n")
         
         # create second frame
@@ -105,6 +111,11 @@ class Gui(customtkinter.CTk):
     def history_button_event(self):
         self.select_frame_by_name("History")
 
+    def on_closing(self):
+        """Handle cleanup on GUI close."""
+        self.message_handler.stop()
+        self.destroy()
+    
     def update_progress_bar(self, percentage):
         # This function updates the progress bar with a given percentage
         self.progress_bar.set(percentage / 100)  # Set expects a value between 0 and 1
