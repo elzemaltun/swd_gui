@@ -1,6 +1,7 @@
 import customtkinter
 import tkinter
 import tkinter.messagebox
+from threading import Thread
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -40,13 +41,20 @@ class Gui(customtkinter.CTk):
 
         # create home frame
         self.home_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.home_frame.grid_columnconfigure(0, weight=1)
+        self.home_frame.grid_columnconfigure(0, weight=1)  # Center content horizontally
+        self.home_frame.grid_rowconfigure(0, weight=1)  # Add vertical centering
+        self.home_frame.grid_rowconfigure(1, weight=1)
+        self.home_frame.grid_rowconfigure(2, weight=1)
 
         self.home_frame_label = customtkinter.CTkLabel(self.home_frame, text="")
         self.home_frame_label.grid(row=0, column=0, padx=20, pady=10)
+
+        self.progress_bar = customtkinter.CTkProgressBar(self.home_frame, orientation="horizontal", width=400, height=25)
+        self.progress_bar.grid(row=1, column=0, padx=20, pady=20, sticky="n")
+        self.progress_bar.set(0)  # Initialize to 0%
         
         self.home_frame_button_1 = customtkinter.CTkButton(self.home_frame, text="EMPTY WASTE", fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
-        self.home_frame_button_1.grid(row=3, column=0, padx=20, pady=10)
+        self.home_frame_button_1.grid(row=2, column=0, padx=20, pady=20, sticky="n")
         
         # create second frame
         self.second_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
@@ -91,6 +99,13 @@ class Gui(customtkinter.CTk):
     def history_button_event(self):
         self.select_frame_by_name("History")
 
+    def update_progress_bar(self, percentage):
+        # This function updates the progress bar with a given percentage
+        self.progress_bar.set(percentage / 100)  # Set expects a value between 0 and 1
+        if percentage > 70:
+            self.progress_bar.configure(fg_color="red")  # Change to red
+        else:
+            self.progress_bar.configure(fg_color="green")
 
 
 root = Gui()
