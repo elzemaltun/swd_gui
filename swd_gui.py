@@ -132,7 +132,7 @@ class Gui(customtkinter.CTk):
                     # Update the waste level progress bar
                     waste_level = float(waste_level)
                     if 0 <= waste_level <= 100:
-                        self.progress_bar.set(waste_level / 100.0)
+                        self.progress_bar.set(waste_level * 5 / 100.0) # assuming the container's total height is 20 cm
                         print(f"Waste Level: {waste_level}%")
 
                     # Update the temperature progress bar
