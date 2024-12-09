@@ -117,14 +117,40 @@ class Gui(customtkinter.CTk):
 
     def process_message(self, message):
         try:
-            if message.startswith("WASTE_LEVEL:"):
-                fullness_percentage = int(message.split(":")[1])
-                self.progress_bar.set(fullness_percentage / 100.0)  # Update progress bar
-                print(f"Received: {fullness_percentage}")
+            # Remove any whitespace and ensure the message is in expected format
+            message = message.strip()
+
+            # Check if the message is in curly braces
+            if message.startswith("{") and message.endswith("}"):
+                # Remove curly braces and split the content
+                content = message[1:-1].split(",")
+
+                if len(content) == 5:
+                    # Extract the fields based on the expected message format
+                    ack, waste_level, temperature, door_state, status_code = content
+
+                    # Update the waste level progress bar
+                    waste_level = float(waste_level)
+                    if 0 <= waste_level <= 100:
+                        self.progress_bar.set(waste_level / 100.0)
+                        print(f"Waste Level: {waste_level}%")
+
+                    # Update the temperature progress bar
+                    temperature = float(temperature)
+                    self.progress_bar_temp.set(temperature / 100.0)
+                    print(f"Temperature: {temperature}°C")
+
+                    # Print other message parts for debugging
+                    door_state = int(door_state)
+                    status_code = int(status_code)
+                    print(f"Door State: {door_state}, Status Code: {status_code}")
+                else:
+                    print("Error: Message does not have the correct number of fields.")
             else:
-                print(f"Received: {message}")
+                print("Error: Message format is incorrect.")
         except Exception as e:
             print(f"Error processing message: {e}")
+
 
     def on_closing(self):
         print("Stopping message handler and closing application...")
