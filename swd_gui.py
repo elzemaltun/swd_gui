@@ -4,6 +4,7 @@ import tkinter.messagebox
 from threading import Thread
 from button_handler import MessageHandler
 from serial_handler import SerialHandler
+from tkinter.ttk import Progressbar
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -16,6 +17,7 @@ class Gui(customtkinter.CTk):
         # SerialHandler setup
         self.serial_handler = SerialHandler(port="COM8", baudrate=9600)  
         self.message_handler = MessageHandler(self.serial_handler)
+        self.serial_handler.start_receiving(self.process_message)
 
         # configure window
         self.title("Smart Waste Disposal Operational Board")
@@ -69,9 +71,9 @@ class Gui(customtkinter.CTk):
         self.second_frame_label = customtkinter.CTkLabel(self.second_frame, text="")
         self.second_frame_label.grid(row=0, column=0, padx=20, pady=10)
 
-        self.progress_bar = customtkinter.CTkProgressBar(self.second_frame, orientation="vertical", height=200, width=30)
-        self.progress_bar.grid(row=1, column=0, padx=20, pady=10)
-        self.progress_bar.set(0.25)
+        self.progress_bar_temp = customtkinter.CTkProgressBar(self.second_frame, orientation="vertical", height=200, width=30)
+        self.progress_bar_temp.grid(row=1, column=0, padx=20, pady=10)
+        self.progress_bar_temp.set(0)
 
         self.second_frame_button_1 = customtkinter.CTkButton(self.second_frame, text="FIX TEMP", fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
         self.second_frame_button_1.grid(row=2, column=0, padx=20, pady=10)
@@ -81,6 +83,8 @@ class Gui(customtkinter.CTk):
 
         # select default frame
         self.select_frame_by_name("Waste Level")
+
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def select_frame_by_name(self, name):
         # set button color for selected button
@@ -111,18 +115,22 @@ class Gui(customtkinter.CTk):
     def history_button_event(self):
         self.select_frame_by_name("History")
 
+    def process_message(self, message):
+        try:
+            if message.startswith("WASTE_LEVEL:"):
+                fullness_percentage = int(message.split(":")[1])
+                self.progress_bar.set(fullness_percentage / 100.0)  # Update progress bar
+                print(f"Received: {fullness_percentage}")
+            else:
+                print(f"Received: {message}")
+        except Exception as e:
+            print(f"Error processing message: {e}")
+
     def on_closing(self):
-        """Handle cleanup on GUI close."""
-        self.message_handler.stop()
-        self.destroy()
-    
-    def update_progress_bar(self, percentage):
-        # This function updates the progress bar with a given percentage
-        self.progress_bar.set(percentage / 100)  # Set expects a value between 0 and 1
-        if percentage > 70:
-            self.progress_bar.configure(fg_color="red")  # Change to red
-        else:
-            self.progress_bar.configure(fg_color="green")
+        print("Stopping message handler and closing application...")
+        self.serial_handler.stop()  # Stop receiving messages
+        self.message_handler.stop()  # Stop sending messages
+        self.destroy()              # Close the GUI
 
 
 root = Gui()
