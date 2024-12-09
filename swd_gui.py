@@ -75,7 +75,7 @@ class Gui(customtkinter.CTk):
         self.progress_bar_temp.grid(row=1, column=0, padx=20, pady=10)
         self.progress_bar_temp.set(0)
 
-        self.second_frame_button_1 = customtkinter.CTkButton(self.second_frame, text="FIX TEMP", fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
+        self.second_frame_button_1 = customtkinter.CTkButton(self.second_frame, text="FIX TEMP", fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.message_handler.fix_button_clicked)
         self.second_frame_button_1.grid(row=2, column=0, padx=20, pady=10)
 
         # create third frame
