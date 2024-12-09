@@ -42,5 +42,4 @@ class MessageHandler:
             self.fix_flag = False
 
     def stop(self):
-        """Stop the continuous message-sending thread."""
         self.running = False
