@@ -127,13 +127,14 @@ class Gui(customtkinter.CTk):
 
                 if len(content) == 5:
                     # Extract the fields based on the expected message format
-                    ack, waste_level, temperature, door_state, status_code = content
+                    ack, distance_to_sensor, temperature, door_state, status_code = content
 
                     # Update the waste level progress bar
-                    waste_level = float(waste_level)
-                    if 0 <= waste_level <= 100:
-                        self.progress_bar.set(waste_level * 5 / 100.0) # assuming the container's total height is 20 cm
-                        print(f"Waste Level: {waste_level}%")
+                    distance_to_sensor = float(distance_to_sensor)
+                    if 0 <= distance_to_sensor <= 100:
+                        waste_level = 25 - distance_to_sensor
+                        self.progress_bar.set(waste_level * 4 / 100.0)
+                        print(f"Waste Level: {distance_to_sensor}%")
 
                     # Update the temperature progress bar
                     temperature = float(temperature)
