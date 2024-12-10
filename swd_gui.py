@@ -131,10 +131,11 @@ class Gui(customtkinter.CTk):
 
                     # Update the waste level progress bar
                     distance_to_sensor = float(distance_to_sensor)
-                    if 0 <= distance_to_sensor <= 100:
-                        waste_level = 25 - distance_to_sensor
-                        self.progress_bar.set(waste_level * 4 / 100.0)
-                        print(f"Waste Level: {distance_to_sensor}%")
+                    max_distance = 3
+                    if 0 <= distance_to_sensor <= max_distance:
+                        waste_level = ((max_distance - distance_to_sensor)/ max_distance)
+                        self.progress_bar.set(waste_level)
+                        print(f"Distance: {distance_to_sensor}")
 
                     # Update the temperature progress bar
                     temperature = float(temperature)
