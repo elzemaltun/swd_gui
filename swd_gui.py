@@ -54,7 +54,7 @@ class Gui(customtkinter.CTk):
         self.home_frame.grid_rowconfigure(1, weight=1)
         self.home_frame.grid_rowconfigure(2, weight=1)
 
-        self.home_frame_label = customtkinter.CTkLabel(self.home_frame, text="")
+        self.home_frame_label = customtkinter.CTkLabel(self.home_frame, text="Monitoring Waste Level", font=customtkinter.CTkFont(size=24, weight="bold")) 
         self.home_frame_label.grid(row=0, column=0, padx=20, pady=10)
 
         self.progress_bar = customtkinter.CTkProgressBar(self.home_frame, orientation="horizontal", width=400, height=25)
@@ -68,7 +68,7 @@ class Gui(customtkinter.CTk):
         self.second_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.second_frame.grid_columnconfigure(0, weight=1)
 
-        self.second_frame_label = customtkinter.CTkLabel(self.second_frame, text="")
+        self.second_frame_label = customtkinter.CTkLabel(self.second_frame, text="Monitoring Temperature Level", font=customtkinter.CTkFont(size=24, weight="bold"))
         self.second_frame_label.grid(row=0, column=0, padx=20, pady=10)
 
         self.progress_bar_temp = customtkinter.CTkProgressBar(self.second_frame, orientation="vertical", height=200, width=30)
